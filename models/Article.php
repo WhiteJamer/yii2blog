@@ -137,6 +137,27 @@ class Article extends \yii\db\ActiveRecord
         }
     }
 
+    public function saveTags($tags)
+    {
+        $this->clearCurrentTags();
+        foreach ($tags as $tag_id)
+        {
+
+            $tag = Tag::findOne(['id' => $tag_id]);
+            $this->link('tags', $tag);
+            $this->save();
+        }
+        return true;
+    }
+
+    public function clearCurrentTags()
+    {
+        if($this->tags != null)
+        {
+            ArticleTag::deleteAll(['article_id' => $this->id]);
+        }
+    }
+
     public function beforeDelete()
     {
         $this->deleteCurrentImage(); # Удаляет картинку с сервера, до удаления записи из базы
