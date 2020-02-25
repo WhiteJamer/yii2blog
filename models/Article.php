@@ -158,6 +158,11 @@ class Article extends \yii\db\ActiveRecord
         }
     }
 
+    public function getImage()
+    {
+        return ($this->image) ? '/uploads/' . $this->image : '/no-image.png';
+    }
+
     public function beforeDelete()
     {
         $this->deleteCurrentImage(); # Удаляет картинку с сервера, до удаления записи из базы

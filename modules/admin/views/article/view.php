@@ -35,9 +35,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'content:ntext',
-            'author_id',
-            'category_id',
-            'image',
+            [
+                'label' => 'Author',
+                'format' => 'text',
+                'value' => function($data){
+                    return $data->author->username;
+                }
+            ],
+            [
+                'label' => 'Category',
+                'format' => 'text',
+                'value' => function($data){
+                    return $data->category->name;
+                }
+            ],
+            [
+                'label' => 'Image',
+                'format' => 'html',
+                'value' => function($data){
+                    return Html::img($data->getImage(), ['width' => 100]);
+                }
+            ],
             'pub_date',
             'views',
         ],
