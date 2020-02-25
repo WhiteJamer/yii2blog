@@ -126,6 +126,17 @@ class Article extends \yii\db\ActiveRecord
         $imageUploadModel->deleteCurrentImage($this->image);
     }
 
+    public function saveCategory($category_id)
+    {
+        $category = Category::findOne($category_id);
+
+        if ($category != null)
+        {
+            $this->link('category', $category);
+            return ($this->save(false)) ? true : false;
+        }
+    }
+
     public function beforeDelete()
     {
         $this->deleteCurrentImage(); # Удаляет картинку с сервера, до удаления записи из базы
