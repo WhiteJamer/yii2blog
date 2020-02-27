@@ -72,4 +72,9 @@ class User extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Comment::className(), ['author_id' => 'id']);
     }
+
+    public function getAvatar()
+    {
+        return ($this->avatar) ? '/uploads/' . $this->avatar : '/no-image-user.png';
+    }
 }

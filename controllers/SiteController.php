@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Article;
+use app\models\CommentForm;
 use Yii;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
@@ -63,6 +64,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        # site/index
+
         $query = Article::find();
         $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 3]);
         $articles = Article::find()
@@ -74,6 +77,34 @@ class SiteController extends Controller
                 'articles' => $articles,
                 'pagination' => $pagination,
             ]);
+    }
+
+    public function actionArticle($id)
+    {
+        # Детальное представление статьи
+        # site/article?id={$id}
+
+        $article = Article::findOne(['id' => $id]);
+        $commentForm = new CommentForm;
+
+        return $this->render('single',
+            [
+                'article' => $article,
+                'commentForm' => $commentForm,
+            ]);
+    }
+
+    public function actionAddComment($article_id)
+    {
+        $commentForm = new CommentForm;
+        if(Yii::$app->request->isPost)
+        {
+            $commentForm->load(Yii::$app->request->post());
+            if($commentForm->addComment($article_id))
+            {
+                return $this->redirect(['site/article', 'id' => $article_id]);
+            }
+        }
     }
 
     /**
