@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Article;
+use app\models\Category;
 use app\models\CommentForm;
 use Yii;
 use yii\data\Pagination;
@@ -93,6 +94,25 @@ class SiteController extends Controller
             [
                 'articles' => $articles,
                 'pagination' => $pagination,
+            ]);
+    }
+
+    public function actionCategory($id)
+    {
+        # site/articles
+        $category = Category::findOne(['id' => $id]);
+        $query = Article::find()
+            ->where(['category_id' => $id]);
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
+        $articles = Article::find()
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('category',
+            [
+                'articles' => $articles,
+                'pagination' => $pagination,
+                'category' => $category,
             ]);
     }
 
