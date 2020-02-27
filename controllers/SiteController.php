@@ -79,6 +79,23 @@ class SiteController extends Controller
             ]);
     }
 
+    public function actionArticles()
+    {
+        # site/articles
+
+        $query = Article::find();
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
+        $articles = Article::find()
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('article-list',
+            [
+                'articles' => $articles,
+                'pagination' => $pagination,
+            ]);
+    }
+
     public function actionArticle($id)
     {
         # Детальное представление статьи
