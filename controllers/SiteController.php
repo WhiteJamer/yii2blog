@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Article;
 use Yii;
+use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -61,7 +63,17 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $query = Article::find();
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 3]);
+        $articles = Article::find()
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('index',
+            [
+                'articles' => $articles,
+                'pagination' => $pagination,
+            ]);
     }
 
     /**
@@ -125,4 +137,5 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
 }

@@ -40,7 +40,7 @@ class Article extends \yii\db\ActiveRecord
         return [
             [['content', 'image'], 'string'],
             [['author_id', 'category_id', 'views'], 'integer'],
-            [['pub_date'], 'safe'],
+            [['pub_date'], 'default', 'value' => date('Y-m-d')],
             [['title'], 'string', 'max' => 255],
             [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
@@ -161,6 +161,11 @@ class Article extends \yii\db\ActiveRecord
     public function getImage()
     {
         return ($this->image) ? '/uploads/' . $this->image : '/no-image.png';
+    }
+
+    public function getDate()
+    {
+        return Yii::$app->formatter->asDate($this->pub_date);
     }
 
     public function beforeDelete()
