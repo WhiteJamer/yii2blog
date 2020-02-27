@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = $article->title . ' | BlogEngine';
 
 use yii\helpers\Html;
 use yii\helpers\Url;

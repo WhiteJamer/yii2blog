@@ -129,9 +129,6 @@ class ArticleController extends Controller
                 return $this->redirect(['view', 'id' => $article->id]);
 
             }
-            else{
-                die('NO');
-            }
 
 
         }

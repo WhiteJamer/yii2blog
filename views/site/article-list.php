@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = 'Article List | BlogEngine';
 
 use yii\helpers\Html;
 use yii\helpers\StringHelper;

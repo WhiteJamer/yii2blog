@@ -11,6 +11,7 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
+
 BlogAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -28,12 +29,12 @@ BlogAsset::register($this);
     <!-- favicon icon -->
     <link rel="shortcut icon" href="assets/images/index.html">
 
-    <title>Treasure</title>
 
     <?php $this->head() ?>
+    <title><?= $this->title ?></title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="icon" type="image/png" href="/public/images/favicon.png">
 </head>
 <body>
 <?php $this->beginBody() ?>
@@ -88,42 +89,6 @@ BlogAsset::register($this);
 <!--main content start-->
 <div class="main-content">
         <?= $content ?>
-</div>
-
-<!--footer start-->
-<div id="footer">
-    <div class="footer-instagram-section">
-        <h3 class="footer-instagram-title text-center text-uppercase">Instagram</h3>
-
-        <div id="footer-instagram" class="owl-carousel">
-
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-1.jpg" alt=""></a>
-            </div>
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-2.jpg" alt=""></a>
-            </div>
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-3.jpg" alt=""></a>
-            </div>
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-4.jpg" alt=""></a>
-            </div>
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-5.jpg" alt=""></a>
-            </div>
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-6.jpg" alt=""></a>
-            </div>
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-7.jpg" alt=""></a>
-            </div>
-            <div class="item">
-                <a href="#"><img src="assets/images/ins-8.jpg" alt=""></a>
-            </div>
-
-        </div>
-    </div>
 </div>
 
 <footer class="footer-widget-section">
