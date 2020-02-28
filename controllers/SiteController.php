@@ -5,6 +5,8 @@ namespace app\controllers;
 use app\models\Article;
 use app\models\Category;
 use app\models\CommentForm;
+use app\models\SignupForm;
+use app\models\User;
 use Yii;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
@@ -36,7 +38,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['get','post'],
                 ],
             ],
         ];
@@ -155,7 +157,8 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm();
+        $loginWithEmail = Yii::$app->params['loginWithEmail'];
+        $model = $loginWithEmail ? new LoginForm(['scenario' => 'loginWithEmail']) : new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
@@ -176,6 +179,24 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+
+    public function actionSignup()
+    {
+        $model = new SignupForm;
+        if(Yii::$app->request->isPost)
+        {
+            if($model->load(Yii::$app->request->post()) and $model->signUp())
+            {
+                $user = User::findByUsername($model->username);
+                Yii::$app->user->login($user);
+                return $this->redirect(['index']);
+            }
+        }
+        return $this->render('signup',
+            [
+                'model' => $model
+            ]);
     }
 
     /**

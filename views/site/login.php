@@ -24,7 +24,11 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 
-        <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+        <?php if($model->scenario === 'loginWithEmail'): ?>
+            <?= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
+        <?php else:?>
+            <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
+        <?php endif ?>
 
         <?= $form->field($model, 'password')->passwordInput() ?>
 

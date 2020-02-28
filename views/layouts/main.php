@@ -8,6 +8,7 @@ use app\widgets\Alert;
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
+use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
@@ -29,8 +30,8 @@ BlogAsset::register($this);
     <!-- favicon icon -->
     <link rel="shortcut icon" href="assets/images/index.html">
 
-
     <?php $this->head() ?>
+    <?= Html::csrfMetaTags() ?>
     <title><?= $this->title ?></title>
 
     <!-- Favicon -->
@@ -64,8 +65,13 @@ BlogAsset::register($this);
                 </ul>
                 <div class="i_con">
                     <ul class="nav navbar-nav text-uppercase">
-                        <li><a href="#">Login</a></li>
-                        <li><a href="#">Register</a></li>
+                        <?php if (!Yii::$app->user->isGuest): ?>
+                            <li><a href="#"><?= Yii::$app->user->identity['username'] ?></a></li>
+                            <li><a href="<?= Url::toRoute(['site/logout'])?>">Logout</a></li>
+                        <?php else: ?>
+                            <li><a href="/site/login">Login</a></li>
+                            <li><a href="/site/signup">Signup</a></li>
+                        <?php endif ?>
                     </ul>
                 </div>
 
