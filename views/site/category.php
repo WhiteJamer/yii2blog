@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = $category->name . ' category | BlogEngine';
+$this->title = $category->name . ' категория | ' . Yii::$app->name;
 
 use yii\helpers\Html;
 use yii\helpers\StringHelper;

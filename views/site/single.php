@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = $article->title . ' | BlogEngine';
+$this->title = $article->title . ' | ' . Yii::$app->name;
 
 use yii\helpers\Html;
 use yii\helpers\Url;
