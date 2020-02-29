@@ -38,12 +38,10 @@ class Article extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['title'], 'string', 'max' => 255],
             [['content', 'image'], 'string'],
             [['author_id', 'category_id', 'views'], 'integer'],
-            [['pub_date'], 'default', 'value' => date('Y-m-d')],
-            [['title'], 'string', 'max' => 255],
-            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['author_id' => 'id']],
-            [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
+            [['pub_date'], 'default', 'value' => date('Y-m-d H:i:s')],
         ];
     }
 
@@ -168,6 +166,24 @@ class Article extends \yii\db\ActiveRecord
         return Yii::$app->formatter->asDate($this->pub_date);
     }
 
+    public static function getPopular($limit = 5)
+    {
+        return static::find()->orderBy('views desc')->limit($limit)->all();
+    }
+
+    public static function getRecent($limit = 5)
+    {
+        return static::find()->orderBy('pub_date desc')->limit($limit)->all();
+    }
+
+    public function saveArticle()
+    {
+        if ($this->author_id === null)
+        {
+            $this->author_id = Yii::$app->user->id;
+        }
+        return $this->save();
+    }
     public function beforeDelete()
     {
         $this->deleteCurrentImage(); # Удаляет картинку с сервера, до удаления записи из базы
