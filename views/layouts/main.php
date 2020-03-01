@@ -59,7 +59,7 @@ BlogAsset::register($this);
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                 <ul class="nav navbar-nav text-uppercase">
-                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="/">Home</a>
+                    <li><a href="/">Home</a>
 
                     </li>
                 </ul>
@@ -67,10 +67,10 @@ BlogAsset::register($this);
                     <ul class="nav navbar-nav text-uppercase">
                         <?php if (!Yii::$app->user->isGuest): ?>
                             <li><a href="#"><?= Yii::$app->user->identity['username'] ?></a></li>
-                            <li><a href="<?= Url::toRoute(['site/logout'])?>">Logout</a></li>
+                            <li><a href="<?= Url::toRoute(['auth/logout'])?>">Logout</a></li>
                         <?php else: ?>
-                            <li><a href="/site/login">Login</a></li>
-                            <li><a href="/site/signup">Signup</a></li>
+                            <li><a href="/auth/login">Login</a></li>
+                            <li><a href="/auth/signup">Signup</a></li>
                         <?php endif ?>
                     </ul>
                 </div>

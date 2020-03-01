@@ -14,6 +14,7 @@ use yii\web\IdentityInterface;
  * @property string|null $email
  * @property int|null $isAdmin
  * @property string|null $avatar
+ * @property int|null $vk_id
  *
  * @property Article[] $articles
  * @property Comment[] $comments
@@ -46,11 +47,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             'id' => 'ID',
-            'username' => 'Username',
-            'password' => 'Password',
-            'email' => 'Email',
-            'isAdmin' => 'Is Admin',
-            'avatar' => 'Avatar',
+            'username' => 'Имя пользователя',
+            'password' => 'Пароль',
+            'email' => 'E-mail',
+            'isAdmin' => 'Админ?',
+            'avatar' => 'Аватар',
+            'vk_id' => 'VK_ID'
         ];
     }
 
