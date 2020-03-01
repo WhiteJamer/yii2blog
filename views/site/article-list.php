@@ -34,7 +34,7 @@ use yii\widgets\LinkPager;
                                 <h1 class="entry-title"><a href="<?= Url::toRoute(['site/article', 'id' => $article->id])?>"><?= Html::encode($article->title)?></a></h1>
                             </header>
                             <div class="entry-content">
-                                <p><?= StringHelper::truncateWords(Html::encode($article->content), 20)?>
+                                <p><?= StringHelper::truncateWords($article->content, 20)?>
                                 </p>
                             </div>
                             <div class="social-share">

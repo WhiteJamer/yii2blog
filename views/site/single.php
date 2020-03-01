@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm; ?>
 
                     </header>
                     <div class="entry-content">
-                        <p><?= Html::encode($article->content) ?>
+                        <p><?= $article->content ?>
                         </p>
                     </div>
                     <div class="decoration">

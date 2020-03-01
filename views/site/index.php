@@ -31,7 +31,7 @@ use yii\widgets\LinkPager;
 
                         </header>
                         <div class="entry-content">
-                            <p><?= Html::encode($article->content)?>
+                            <p><?= $article->content?>
                             </p>
 
                             <div class="btn-continue-reading text-center text-uppercase">

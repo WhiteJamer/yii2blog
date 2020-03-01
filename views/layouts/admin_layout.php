@@ -65,6 +65,28 @@ AppAsset::register($this);
 </footer>
 
 <?php $this->endBody() ?>
+<?php
+$this->registerJsFile("/public/ckeditor5/ckeditor.js");
+$this->registerJsFile("/public/ckeditor5/translations/ru.js");
+?>
+<script>
+    ClassicEditor
+        .create( document.querySelector( 'textarea' ),
+        {
+            language: 'ru',
+        }
+        )
+        .then( editor => {
+            console.log( editor );
+        } )
+        .catch( error => {
+            console.error( error );
+        } );
+</script>
+
+<!--Минимальная высота редактора 40rem -->
+<style>.ck.ck-content{ min-height: 40rem; }</style>
+
 </body>
 </html>
 <?php $this->endPage() ?>
