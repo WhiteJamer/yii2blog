@@ -78,7 +78,17 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function getAvatar()
     {
-        return ($this->avatar) ? '/uploads/' . $this->avatar : '/no-image-user.png';
+        if($this->avatar and !$this->vk_id)
+        {
+            return '/uploads/' . $this->avatar;
+        }
+        elseif($this->avatar and $this->vk_id)
+        {
+            return $this->avatar;
+        }
+        else {
+            return '/no-image-user.png';
+        }
     }
 
     /**

@@ -25,6 +25,7 @@ class CommentForm extends Model
         $comment->body = $this->body;
         $comment->author_id = Yii::$app->user->id;
         $comment->article_id = $article_id;
+        $comment->pub_date = date('Y-m-d H:i:s');
         return $comment->save();
 
 
