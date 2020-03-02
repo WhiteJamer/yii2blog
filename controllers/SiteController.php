@@ -6,6 +6,7 @@ use app\models\Article;
 use app\models\Category;
 use app\models\CommentForm;
 use app\models\SignupForm;
+use app\models\Tag;
 use app\models\User;
 use Yii;
 use yii\data\Pagination;
@@ -74,6 +75,24 @@ class SiteController extends Controller
                 'articles' => $articles,
                 'pagination' => $pagination,
                 'category' => $category,
+            ]);
+    }
+
+    public function actionTag($name)
+    {
+        $tag = Tag::findOne(['name' => $name]);
+        $query = $tag->hasMany(Article::className(), ['id' => 'article_id'])
+            ->viaTable('article_tag', ['tag_id' => 'id']);
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
+        $articles = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('tag',
+            [
+                'tag' => $tag,
+                'articles' => $articles,
+                'pagination' => $pagination
             ]);
     }
 
