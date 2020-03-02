@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "user".
@@ -13,11 +14,12 @@ use Yii;
  * @property string|null $email
  * @property int|null $isAdmin
  * @property string|null $avatar
+ * @property int|null $vk_id
  *
  * @property Article[] $articles
  * @property Comment[] $comments
  */
-class User extends \yii\db\ActiveRecord
+class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
     /**
      * {@inheritdoc}
@@ -45,11 +47,12 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'username' => 'Username',
-            'password' => 'Password',
-            'email' => 'Email',
-            'isAdmin' => 'Is Admin',
-            'avatar' => 'Avatar',
+            'username' => 'Имя пользователя',
+            'password' => 'Пароль',
+            'email' => 'E-mail',
+            'isAdmin' => 'Админ?',
+            'avatar' => 'Аватар',
+            'vk_id' => 'VK_ID'
         ];
     }
 
@@ -71,5 +74,76 @@ class User extends \yii\db\ActiveRecord
     public function getComments()
     {
         return $this->hasMany(Comment::className(), ['author_id' => 'id']);
+    }
+
+    public function getAvatar()
+    {
+        if($this->avatar and !$this->vk_id)
+        {
+            return '/uploads/' . $this->avatar;
+        }
+        elseif($this->avatar and $this->vk_id)
+        {
+            return $this->avatar;
+        }
+        else {
+            return '/no-image-user.png';
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    public static function findByUsername($username)
+    {
+        return static::findOne(['username' => $username]);
+    }
+
+    public static function findByEmail($email)
+    {
+        return static::findOne(['email' => $email]);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        // TODO: Implement findIdentityByAccessToken() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAuthKey()
+    {
+        // TODO: Implement getAuthKey() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validateAuthKey($authKey)
+    {
+        // TODO: Implement validateAuthKey() method.
     }
 }

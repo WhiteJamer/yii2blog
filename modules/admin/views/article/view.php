@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\StringHelper;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -33,31 +34,55 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'title',
-            'content:ntext',
             [
-                'label' => 'Author',
+                'label' => 'Заголовок',
+                'format' => 'html',
+                'value' => function($data){
+                    return Html::a($data->title, ['/site/article', 'id' => $data->id]);
+                }
+            ],
+            [
+                'label' => 'Контент',
+                'format' => 'html',
+                'value' => function($data){
+                    return StringHelper::truncate($data->content, 100);
+                }
+            ],
+            [
+                'label' => 'Автор',
                 'format' => 'text',
                 'value' => function($data){
                     return $data->author->username;
                 }
             ],
             [
-                'label' => 'Category',
-                'format' => 'text',
+                'label' => 'Категория',
+                'format' => 'html',
                 'value' => function($data){
-                    return $data->category->name;
+                    return Html::a($data->category->name, ['/site/category', 'id' => $data->category->id]);
                 }
             ],
             [
-                'label' => 'Image',
+                'label' => 'Картинка',
                 'format' => 'html',
                 'value' => function($data){
                     return Html::img($data->getImage(), ['width' => 100]);
                 }
             ],
-            'pub_date',
-            'views',
+            [
+                'label' => 'Дата публикации',
+                'format' => 'text',
+                'value' => function($data){
+                    return $data->getDate();
+                }
+            ],
+            [
+                'label' => 'Кол-во просмотров',
+                'format' => 'text',
+                'value' => function($data){
+                    return $data->views;
+                }
+            ],
         ],
     ]) ?>
 

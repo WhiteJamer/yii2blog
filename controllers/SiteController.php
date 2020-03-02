@@ -2,7 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\Article;
+use app\models\Category;
+use app\models\CommentForm;
+use app\models\SignupForm;
+use app\models\Tag;
+use app\models\User;
 use Yii;
+use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
@@ -12,47 +19,6 @@ use app\models\ContactForm;
 
 class SiteController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::className(),
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function actions()
-    {
-        return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
-            'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
-            ],
-        ];
-    }
 
     /**
      * Displays homepage.
@@ -61,41 +27,101 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        # site/index
+
+        $query = Article::find();
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 3]);
+        $articles = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('index',
+            [
+                'articles' => $articles,
+                'pagination' => $pagination,
+            ]);
     }
 
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
+    public function actionArticles()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
+        # site/articles
 
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        $query = Article::find();
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
+        $articles = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('article-list',
+            [
+                'articles' => $articles,
+                'pagination' => $pagination,
+            ]);
     }
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
+    public function actionCategory($id)
     {
-        Yii::$app->user->logout();
+        # site/articles
+        $category = Category::findOne(['id' => $id]);
+        $query = Article::find()
+            ->where(['category_id' => $id]);
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
+        $articles = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('category',
+            [
+                'articles' => $articles,
+                'pagination' => $pagination,
+                'category' => $category,
+            ]);
+    }
 
-        return $this->goHome();
+    public function actionTag($name)
+    {
+        $tag = Tag::findOne(['name' => $name]);
+        $query = $tag->hasMany(Article::className(), ['id' => 'article_id'])
+            ->viaTable('article_tag', ['tag_id' => 'id']);
+        $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
+        $articles = $query
+            ->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('tag',
+            [
+                'tag' => $tag,
+                'articles' => $articles,
+                'pagination' => $pagination
+            ]);
+    }
+
+    public function actionArticle($id)
+    {
+        # Детальное представление статьи
+        # site/article?id={$id}
+
+        $article = Article::findOne(['id' => $id]);
+        $commentForm = new CommentForm;
+
+        return $this->render('single',
+            [
+                'article' => $article,
+                'commentForm' => $commentForm,
+            ]);
+    }
+
+    public function actionAddComment($article_id)
+    {
+        $commentForm = new CommentForm;
+        if(Yii::$app->request->isPost)
+        {
+            $commentForm->load(Yii::$app->request->post());
+            if($commentForm->addComment($article_id))
+            {
+                return $this->redirect(['site/article', 'id' => $article_id]);
+            }
+        }
     }
 
     /**
@@ -125,4 +151,5 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+
 }

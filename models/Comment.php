@@ -73,4 +73,9 @@ class Comment extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::className(), ['id' => 'author_id']);
     }
+
+    public function getDate()
+    {
+        return Yii::$app->formatter->asDate($this->pub_date);
+    }
 }

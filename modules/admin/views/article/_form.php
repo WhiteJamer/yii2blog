@@ -16,13 +16,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'author_id')->textInput() ?>
-
-    <?= $form->field($model, 'category_id')->textInput() ?>
-
     <?= $form->field($model, 'pub_date')->textInput() ?>
-
-    <?= $form->field($model, 'views')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
@@ -31,3 +25,8 @@ use yii\widgets\ActiveForm;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+
+
+?>
