@@ -18,7 +18,9 @@ use yii\widgets\ActiveForm; ?>
                 </div>
                 <div class="post-content">
                     <header class="entry-header text-center text-uppercase">
-                        <h6><a href="<?= Url::toRoute(['site/category', 'id' => $article->category->id ]) ?>"><?= Html::encode($article->category->name) ?></a></h6>
+                        <?php if($article->category): ?>
+                            <h6><a href="<?= Url::toRoute(['site/category', 'id' => $article->category->id ]) ?>"><?= Html::encode($article->category->name) ?></a></h6>
+                        <?php endif ?>
 
                         <h1 class="entry-title"><a href="<?= Url::toRoute(['site/article', 'id' => $article->id ]) ?>"><?= Html::encode($article->title) ?></a></h1>
 
@@ -29,8 +31,9 @@ use yii\widgets\ActiveForm; ?>
                         </p>
                     </div>
                     <div class="decoration">
-                        <a href="#" class="btn btn-default">Decoration</a>
-                        <a href="#" class="btn btn-default">Decoration</a>
+                        <?php foreach($article->tags as $tag): ?>
+                            <a href="#" class="btn btn-default"><?=Html::encode($tag->name)?></a>
+                        <?php endforeach?>
                     </div>
 
                     <div class="social-share">
