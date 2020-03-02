@@ -2,6 +2,7 @@
 
 namespace app\modules\admin;
 
+use Yii;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
@@ -30,16 +31,16 @@ class Module extends \yii\base\Module
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'denyCallback' => function($role, $action)
+                'denyCallback' => function($rule, $action)
                 {
                     throw new NotFoundHttpException();
                 },
                 'rules' => [
                     [
                         'allow' => true,
-                        'matchCallback' => function($role, $action)
+                        'matchCallback' => function($rule, $action)
                         {
-                            return \Yii::$app->user->identity->isAdmin;
+                            return Yii::$app->user->identity->isAdmin;
                         }
                     ]
                 ]
