@@ -30,7 +30,7 @@ class SiteController extends Controller
 
         $query = Article::find();
         $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 3]);
-        $articles = Article::find()
+        $articles = $query
             ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
@@ -47,7 +47,7 @@ class SiteController extends Controller
 
         $query = Article::find();
         $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
-        $articles = Article::find()
+        $articles = $query
             ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
@@ -65,7 +65,7 @@ class SiteController extends Controller
         $query = Article::find()
             ->where(['category_id' => $id]);
         $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
-        $articles = Article::find()
+        $articles = $query
             ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
