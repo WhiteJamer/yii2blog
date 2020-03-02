@@ -38,10 +38,18 @@ use yii\widgets\LinkPager;
                                 <a href="<?= Url::toRoute(['site/article', 'id' => $article->id])?>" class="more-link">Continue Reading</a>
                             </div>
                         </div>
+                        <div class="tags">
+                            <?php foreach($article->tags as $tag): ?>
+                                <a href="<?= Url::toRoute(['site/tag', 'name' => $tag->name])?>" class="btn btn-info"><?=Html::encode($tag->name)?></a>
+                            <?php endforeach?>
+                        </div>
                         <div class="social-share">
-                            <span class="social-share-title pull-left text-capitalize">By <a href="#"><?= $article->author->username ?></a> On <?= $article->getDate()?></span>
+                            <span class="pull-left text-capitalize">
+                                <a href="#"><b><?= Html::encode($article->author->username)?></b></a>
+                                <?= Html::encode($article->getDate())?>
+                            </span>
                             <ul class="text-center pull-right">
-                                <li><a class="s-facebook" href="#"><i class="fa fa-eye"></i></a></li><?= Html::encode($article->views)?>
+                                <li><a href="#"><i class="fa fa-eye"></i></a></li><?= Html::encode($article->views)?>
                             </ul>
                         </div>
                     </div>

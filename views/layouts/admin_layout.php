@@ -38,11 +38,11 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/admin/']],
-            ['label' => 'Articles', 'url' => ['/admin/article']],
-            ['label' => 'Categories', 'url' => ['/admin/category']],
-            ['label' => 'Tags', 'url' => ['/admin/tag']],
-            ['label' => 'Comments', 'url' => ['/admin/comment']],
+            ['label' => 'Главная', 'url' => ['/admin/']],
+            ['label' => 'Статьи', 'url' => ['/admin/article']],
+            ['label' => 'Категори', 'url' => ['/admin/category']],
+            ['label' => 'Теги', 'url' => ['/admin/tag']],
+            ['label' => 'Комменты', 'url' => ['/admin/comment']],
         ],
     ]);
     NavBar::end();

@@ -59,7 +59,8 @@ BlogAsset::register($this);
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                 <ul class="nav navbar-nav text-uppercase">
-                    <li><a href="/">Home</a>
+                    <li><a href="/">Главная</a>
+                    <li><a href="/site/articles">Статьи</a>
 
                     </li>
                 </ul>
@@ -67,10 +68,10 @@ BlogAsset::register($this);
                     <ul class="nav navbar-nav text-uppercase">
                         <?php if (!Yii::$app->user->isGuest): ?>
                             <li><a href="#"><?= Yii::$app->user->identity['username'] ?></a></li>
-                            <li><a href="<?= Url::toRoute(['auth/logout'])?>">Logout</a></li>
+                            <li><a href="<?= Url::toRoute(['auth/logout'])?>">Выйти</a></li>
                         <?php else: ?>
-                            <li><a href="/auth/login">Login</a></li>
-                            <li><a href="/auth/signup">Signup</a></li>
+                            <li><a href="/auth/login">Войти</a></li>
+                            <li><a href="/auth/signup">Зарегистрироваться</a></li>
                         <?php endif ?>
                     </ul>
                 </div>

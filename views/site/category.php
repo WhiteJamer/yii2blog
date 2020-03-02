@@ -2,7 +2,7 @@
 
 /* @var $this yii\web\View */
 
-$this->title = $category->name . ' категория | ' . Yii::$app->name;
+$this->title = $category->name . ' | ' . Yii::$app->name;
 
 use app\widgets\Sidebar;
 use yii\helpers\Html;
@@ -14,6 +14,7 @@ use yii\widgets\LinkPager;
 <div class="container">
     <div class="row">
         <div class="col-md-8">
+            <h2 class="text-uppercase text-center">Статьи в категории - <?= Html::encode($category->name) ?></h2>
             <?php foreach($articles as $article): ?>
                 <article class="post post-list">
                     <div class="row">
@@ -22,7 +23,7 @@ use yii\widgets\LinkPager;
                                 <a href="<?= Url::toRoute(['site/article', 'id' => $article->id])?>"><img src="<?= $article->getImage() ?>" alt="image" class="pull-left"></a>
 
                                 <a href="<?= Url::toRoute(['site/article', 'id' => $article->id])?>" class="post-thumb-overlay text-center">
-                                    <div class="text-uppercase text-center">View Post</div>
+                                    <div class="text-uppercase text-center">Смотреть</div>
                                 </a>
                             </div>
                         </div>
@@ -37,9 +38,19 @@ use yii\widgets\LinkPager;
                                     <p><?= StringHelper::truncateWords($article->content, 20)?>
                                     </p>
                                 </div>
+                                <div class="tags">
+                                    <?php foreach($article->tags as $tag): ?>
+                                        <a href="<?= Url::toRoute(['site/tag', 'name' => $tag->name])?>" class="btn btn-info"><?=Html::encode($tag->name)?></a>
+                                    <?php endforeach?>
+                                </div>
                                 <div class="social-share">
-                                    <span class="social-share-title pull-left text-capitalize">By <?= Html::encode($article->author->username)?> On <?= Html::encode($article->getDate())?></span>
-
+                                    <span class="pull-left text-capitalize">
+                                        <a href="#"><b><?= Html::encode($article->author->username)?></b></a>
+                                        <?= Html::encode($article->getDate())?>
+                                    </span>
+                                    <ul class="text-center pull-right">
+                                        <li><a href="#"><i class="fa fa-eye"></i></a></li><?= Html::encode($article->views)?>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
