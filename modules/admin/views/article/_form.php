@@ -17,13 +17,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
     <?= Html::activeLabel($model, 'Категория'); ?>
-    <?= Html::dropDownList('category', 0, $categories,
+    <?= Html::dropDownList('category', $currentCategory, $categories,
     [
             'class' => 'form-control',
             'prompt' => (!$currentCategory) ? 'Не указано...' : null,
     ]); ?>
+    <?= Html::activeLabel($model, 'Теги'); ?>
+    <?= Html::dropDownList('tags', $currentTags, $tags, ['class' => 'form-control', 'multiple' => true])?>
 
-    <?= Html::active ?>
     <?= $form->field($model, 'pub_date')->textInput() ?>
 
     <div class="form-group">

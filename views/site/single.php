@@ -30,7 +30,7 @@ use yii\widgets\ActiveForm; ?>
                         <p><?= $article->content ?>
                         </p>
                     </div>
-                    <div class="decoration">
+                    <div class="tags">
                         <?php foreach($article->tags as $tag): ?>
                             <a href="<?= Url::toRoute(['site/tag', 'name' => $tag->name])?>" class="btn btn-default"><?=Html::encode($tag->name)?></a>
                         <?php endforeach?>

@@ -130,19 +130,20 @@ class Article extends \yii\db\ActiveRecord
 
         if ($category != null)
         {
-            return $this->category_id = $category->id;
+            $this->category_id = $category->id;
+            return $this->save(false);
         }
     }
 
-    public function saveTags($tags)
+    public function setTags($tags)
     {
-        $this->clearCurrentTags();
+        $this->clearCurrentTags(); # Удаляем старые связи из промежуточной таблицы ArticleTag
         foreach ($tags as $tag_id)
         {
 
             $tag = Tag::findOne(['id' => $tag_id]);
             $this->link('tags', $tag);
-            $this->save();
+            $this->save(false);
         }
         return true;
     }
@@ -151,7 +152,7 @@ class Article extends \yii\db\ActiveRecord
     {
         if($this->tags != null)
         {
-            ArticleTag::deleteAll(['article_id' => $this->id]);
+            return ArticleTag::deleteAll(['article_id' => $this->id]);
         }
     }
 
@@ -182,7 +183,8 @@ class Article extends \yii\db\ActiveRecord
             $this->author_id = Yii::$app->user->id;
         }
         $this->setCategory(Yii::$app->request->post('category'));
-        return $this->save();
+        $this->save();
+        return $this->setTags(Yii::$app->request->post('tags'));
     }
     public function beforeDelete()
     {

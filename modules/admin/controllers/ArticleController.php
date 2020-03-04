@@ -2,6 +2,7 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\ArticleTag;
 use app\models\Category;
 use app\models\ImageUpload;
 use app\models\Tag;
@@ -71,6 +72,8 @@ class ArticleController extends Controller
     {
         $model = new Article();
         $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
+        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'name');
+
         if ($model->load(Yii::$app->request->post())){
             $model->saveArticle();
             return $this->redirect(['view', 'id' => $model->id]);
@@ -79,6 +82,7 @@ class ArticleController extends Controller
         return $this->render('create', [
             'model' => $model,
             'categories' => $categories,
+            'tags' => $tags
         ]);
     }
 
@@ -96,6 +100,10 @@ class ArticleController extends Controller
         $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
         $currentCategory = $model->category_id;
 
+        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'name');
+        $tagIDs = $this->findModel($model->id)->getTags()->select('id')->asArray()->all();
+        $currentTags = ArrayHelper::getColumn($tagIDs, 'id');
+
         if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -103,7 +111,10 @@ class ArticleController extends Controller
         return $this->render('update', [
             'model' => $model,
             'categories' => $categories,
-            'currentCategory' => $currentCategory
+            'currentCategory' => $currentCategory,
+
+            'tags' => $tags,
+            'currentTags' => $currentTags,
         ]);
     }
 
@@ -169,30 +180,6 @@ class ArticleController extends Controller
 
     }
 
-    public function actionSetTags($id)
-    {
-        $article = $this->findModel($id);
-        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'name');
-
-        $ids = $article->getTags()->select('id')->asArray()->all();
-        $selectedTags = ArrayHelper::getColumn($ids, 'id');
-
-        if(Yii::$app->request->isPost)
-        {
-            $selectedTags = Yii::$app->request->post('tags');
-
-            if ($article->saveTags($selectedTags))
-            {
-                return $this->redirect(['view', 'id' => $article->id]);
-            }
-        }
-        return $this->render('tags',
-            [
-                'model' => $article,
-                'selectedTags' => $selectedTags,
-                'tags' => $tags
-            ]);
-    }
 
     /**
      * Finds the Article model based on its primary key value.

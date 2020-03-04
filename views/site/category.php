@@ -40,7 +40,7 @@ use yii\widgets\LinkPager;
                                 </div>
                                 <div class="tags">
                                     <?php foreach($article->tags as $tag): ?>
-                                        <a href="<?= Url::toRoute(['site/tag', 'name' => $tag->name])?>" class="btn btn-info"><?=Html::encode($tag->name)?></a>
+                                        <a href="<?= Url::toRoute(['site/tag', 'name' => $tag->name])?>" class="btn btn-default"><?=Html::encode($tag->name)?></a>
                                     <?php endforeach?>
                                 </div>
                                 <div class="social-share">
