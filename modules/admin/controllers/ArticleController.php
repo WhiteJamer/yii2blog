@@ -70,13 +70,15 @@ class ArticleController extends Controller
     public function actionCreate()
     {
         $model = new Article();
-
-        if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
+        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
+        if ($model->load(Yii::$app->request->post())){
+            $model->saveArticle();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'categories' => $categories,
         ]);
     }
 
@@ -89,7 +91,10 @@ class ArticleController extends Controller
      */
     public function actionUpdate($id)
     {
+
         $model = $this->findModel($id);
+        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
+        $currentCategory = $model->category_id;
 
         if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -97,6 +102,8 @@ class ArticleController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'categories' => $categories,
+            'currentCategory' => $currentCategory
         ]);
     }
 

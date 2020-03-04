@@ -12,10 +12,18 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
+
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
+    <?= Html::activeLabel($model, 'Категория'); ?>
+    <?= Html::dropDownList('category', 0, $categories,
+    [
+            'class' => 'form-control',
+            'prompt' => (!$currentCategory) ? 'Не указано...' : null,
+    ]); ?>
 
+    <?= Html::active ?>
     <?= $form->field($model, 'pub_date')->textInput() ?>
 
     <div class="form-group">

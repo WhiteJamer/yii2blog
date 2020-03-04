@@ -52,13 +52,13 @@ class Article extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'content' => 'Content',
-            'author_id' => 'Author ID',
-            'category_id' => 'Category ID',
-            'pub_date' => 'Pub Date',
-            'views' => 'Views',
-            'image' => 'Image',
+            'title' => 'Заголовок',
+            'content' => 'Контент',
+            'author_id' => 'Автор',
+            'category_id' => 'Категория',
+            'pub_date' => 'Дата публикации',
+            'views' => 'Просмотры',
+            'image' => 'Картинка',
         ];
     }
 
@@ -124,14 +124,13 @@ class Article extends \yii\db\ActiveRecord
         $imageUploadModel->deleteCurrentImage($this->image);
     }
 
-    public function saveCategory($category_id)
+    public function setCategory($category_id)
     {
         $category = Category::findOne($category_id);
 
         if ($category != null)
         {
-            $this->link('category', $category);
-            return ($this->save(false)) ? true : false;
+            return $this->category_id = $category->id;
         }
     }
 
@@ -182,6 +181,7 @@ class Article extends \yii\db\ActiveRecord
         {
             $this->author_id = Yii::$app->user->id;
         }
+        $this->setCategory(Yii::$app->request->post('category'));
         return $this->save();
     }
     public function beforeDelete()
