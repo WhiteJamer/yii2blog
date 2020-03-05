@@ -139,12 +139,15 @@ class Article extends \yii\db\ActiveRecord
     public function setTags($tags)
     {
         $this->clearCurrentTags(); # Удаляем старые связи из промежуточной таблицы ArticleTag
-        foreach ($tags as $tag_id)
+        if($tags) # возможность оставить поле тегов пустым
         {
+            foreach ($tags as $tag_id)
+            {
 
-            $tag = Tag::findOne(['id' => $tag_id]);
-            $this->link('tags', $tag);
-            $this->save(false);
+                $tag = Tag::findOne(['id' => $tag_id]);
+                $this->link('tags', $tag);
+                $this->save(false);
+            }
         }
         return true;
     }
