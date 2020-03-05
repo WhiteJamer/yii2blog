@@ -71,18 +71,24 @@ class ArticleController extends Controller
     public function actionCreate()
     {
         $model = new Article();
+        $imageForm = new ImageUpload;
+
         $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
         $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'name');
 
-        if ($model->load(Yii::$app->request->post())){
-            $model->saveArticle();
+        if ($model->load(Yii::$app->request->post()) && $imageForm->load(Yii::$app->request->post()))
+        {
+            $model->saveArticle(); # Создаем статью и задаем ей категорию и теги
+            $this->setImage($model);  # Затем устанавливаем для нее картинку
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
             'categories' => $categories,
-            'tags' => $tags
+            'tags' => $tags,
+            'imageModel' => $imageForm
         ]);
     }
 
@@ -97,6 +103,8 @@ class ArticleController extends Controller
     {
 
         $model = $this->findModel($id);
+        $imageForm = new ImageUpload;
+
         $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
         $currentCategory = $model->category_id;
 
@@ -104,8 +112,12 @@ class ArticleController extends Controller
         $tagIDs = $this->findModel($model->id)->getTags()->select('id')->asArray()->all();
         $currentTags = ArrayHelper::getColumn($tagIDs, 'id');
 
-        if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post()) && $imageForm->load(Yii::$app->request->post()))
+        {
+            $model->saveArticle(); # Обновляем данные о статье + категорию и теги
+            $this->setImage($model); # Обновляем картинку
+
+            $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
@@ -115,6 +127,7 @@ class ArticleController extends Controller
 
             'tags' => $tags,
             'currentTags' => $currentTags,
+            'imageModel' => $imageForm,
         ]);
     }
 
@@ -132,54 +145,20 @@ class ArticleController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionSetImage($id)
+    public function setImage(Article $articleForm)
     {
         $imageForm = new ImageUpload;
-        $article = $this->findModel($id);
+        $article = $this->findModel($articleForm->id);
 
-        if(Yii::$app->request->isPost)
+        $file = UploadedFile::getInstance($imageForm, 'imageFile');
+
+        if($file) # Загрузка картинки будет только если поле imageFile не пустое.
         {
-            $file = UploadedFile::getInstance($imageForm, 'imageFile');
-
-            if($article->saveImage($imageForm->uploadImage($file, $article->image)))
-            {
-
-                return $this->redirect(['view', 'id' => $article->id]);
-
-            }
-
-
+            $article->saveImage($imageForm->uploadImage($file, $article->image));
         }
-        return $this->render('image',
-            ['model' => $imageForm]
-        );
+        return true;
 
     }
-
-    public function actionSetCategory($id)
-    {
-        $article = $this->findModel($id);
-        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name'); # нужен array hel[per
-        $currentCategory = ($article->category) ? $article->category->id : 0;
-        if(Yii::$app->request->isPost)
-        {
-
-            $category_id = Yii::$app->request->post('category');
-
-            if($article->saveCategory($category_id))
-            {
-                return $this->redirect(['view', 'id' => $article->id]);
-            }
-        }
-        return $this->render('category',
-            [
-                'model' => $article,
-                'categories' => $categories,
-                'currentCategory' => $currentCategory
-            ]);
-
-    }
-
 
     /**
      * Finds the Article model based on its primary key value.

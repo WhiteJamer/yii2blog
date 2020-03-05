@@ -122,6 +122,7 @@ class Article extends \yii\db\ActiveRecord
     {
         $imageUploadModel = new ImageUpload;
         $imageUploadModel->deleteCurrentImage($this->image);
+        $this->image = null;
     }
 
     public function setCategory($category_id)
@@ -182,9 +183,9 @@ class Article extends \yii\db\ActiveRecord
         {
             $this->author_id = Yii::$app->user->id;
         }
-        $this->setCategory(Yii::$app->request->post('category'));
         $this->save();
-        return $this->setTags(Yii::$app->request->post('tags'));
+        $this->setTags(Yii::$app->request->post('tags'));
+        $this->setCategory(Yii::$app->request->post('category'));
     }
     public function beforeDelete()
     {

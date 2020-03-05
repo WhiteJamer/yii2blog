@@ -26,11 +26,12 @@ use yii\widgets\ActiveForm;
     <?= Html::dropDownList('tags', $currentTags, $tags, ['class' => 'form-control', 'multiple' => true])?>
 
     <?= $form->field($model, 'pub_date')->textInput() ?>
-
+    <!-- Если у статьи уже есть картинка то она будет показываться в форме -->
+    <?= ($model->image) ? Html::img($model->getImage(), ['width' => 100]) : null ?>
+    <?= $form->field($imageModel, 'imageFile')->fileInput()?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
 
 </div>

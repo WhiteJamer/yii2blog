@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = 'Update';
         'categories' => $categories,
         'tags' => $tags,
         'currentTags' => $currentTags,
+        'imageModel' => $imageModel,
 
     ]) ?>
 
