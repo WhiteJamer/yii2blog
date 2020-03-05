@@ -102,6 +102,7 @@ class SiteController extends Controller
         # site/article?id={$id}
 
         $article = Article::findOne(['id' => $id]);
+        $article->viewCounter(); # Инкрементация счетчика просмотров
         $commentForm = new CommentForm;
 
         return $this->render('single',

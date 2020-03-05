@@ -190,6 +190,12 @@ class Article extends \yii\db\ActiveRecord
         $this->setTags(Yii::$app->request->post('tags'));
         $this->setCategory(Yii::$app->request->post('category'));
     }
+
+    public function viewCounter()
+    {
+        $this->views++;
+        return $this->save();
+    }
     public function beforeDelete()
     {
         $this->deleteCurrentImage(); # Удаляет картинку с сервера, до удаления записи из базы
