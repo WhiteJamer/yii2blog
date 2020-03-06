@@ -50,8 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::img($data->getImage(), ['width' => 100]);
                     }
             ],
-            //'pub_date',
-            //'views',
+            [
+                'label' => 'Дата публикации',
+                'format' => 'text',
+                'value' => function($data){
+                    return $data->getDate();
+                }
+            ],
+            'views',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

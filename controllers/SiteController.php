@@ -3,12 +3,14 @@
 namespace app\controllers;
 
 use app\models\Article;
+use app\models\ArticleSearch;
 use app\models\Category;
 use app\models\CommentForm;
 use app\models\SignupForm;
 use app\models\Tag;
 use app\models\User;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -29,7 +31,7 @@ class SiteController extends Controller
     {
         # site/index
 
-        $query = Article::find();
+        $query = Article::find()->orderBy('pub_date desc');
         $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 3]);
         $articles = $query
             ->offset($pagination->offset)
@@ -46,7 +48,7 @@ class SiteController extends Controller
     {
         # site/articles
 
-        $query = Article::find();
+        $query = Article::find()->orderBy('pub_date desc');
         $pagination = new Pagination(['totalCount' => $query->count(), 'defaultPageSize' => 5]);
         $articles = $query
             ->offset($pagination->offset)
@@ -110,6 +112,22 @@ class SiteController extends Controller
                 'article' => $article,
                 'commentForm' => $commentForm,
             ]);
+    }
+    public function actionSearch()
+    {
+        $q = Yii::$app->request->get('search');
+        $query = Article::find();
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 3,
+            ]
+        ]);
+        $query->andFilterWhere(['like', 'title', $q])
+        ->orFilterWhere(['like', 'content', $q]);
+        $articles = $dataProvider->getModels();
+
+        return $this->render('search', ['articles' => $articles]);
     }
 
     public function actionAddComment($article_id)
