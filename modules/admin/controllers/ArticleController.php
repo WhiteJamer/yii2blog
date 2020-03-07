@@ -10,6 +10,7 @@ use Yii;
 use app\models\Article;
 use app\models\ArticleSearch;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -108,9 +109,8 @@ class ArticleController extends Controller
         $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
         $currentCategory = $model->category_id;
 
-        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'name');
-        $tagIDs = $this->findModel($model->id)->getTags()->select('id')->asArray()->all();
-        $currentTags = ArrayHelper::getColumn($tagIDs, 'id');
+        $names = $model->getTags()->asArray()->select('name')->all();
+        $currentTags = ArrayHelper::getColumn($names, 'name');
 
         if ($model->load(Yii::$app->request->post()) && $imageForm->load(Yii::$app->request->post()))
         {
@@ -157,7 +157,33 @@ class ArticleController extends Controller
             $article->saveImage($imageForm->uploadImage($file, $article->image));
         }
         return true;
+    }
 
+    public function actionSendTags()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(Yii::$app->request->isAjax)
+        {
+            $tags = array(); # В этот массив нужно поместить ключи тегов для передачи их в поле 'tags' в ArticleForm.
+            $tagNames = Yii::$app->request->post('data'); # Массив имен из JS-виджета для удобного задания тегов.
+            foreach ($tagNames as $name)
+            {
+                $tag = Tag::findOne(['name' => $name]);
+                if($tag) # Если тег существует то выбираем из него ID
+                {
+                    array_push($tags, $tag->id); # Добавляем ID тега в массив.
+                }
+                else{ # Если такого тега не существует, то создаем его
+                    $new_tag = new Tag;
+                    $new_tag->name = $name;
+                    $new_tag->save();
+                    array_push($tags, $new_tag->id);
+                }
+            }
+            $tags = array_unique($tags, SORT_REGULAR); # Убираем дубликаты из массива, если вдруг они возникнут.
+            return $tags;
+//            return 'Все ок';
+        }
     }
 
     /**
