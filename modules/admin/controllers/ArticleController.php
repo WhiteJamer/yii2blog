@@ -9,6 +9,7 @@ use app\models\Tag;
 use Yii;
 use app\models\Article;
 use app\models\ArticleSearch;
+use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\Controller;
@@ -74,9 +75,6 @@ class ArticleController extends Controller
         $model = new Article();
         $imageForm = new ImageUpload;
 
-        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
-        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'name');
-
         if ($model->load(Yii::$app->request->post()) && $imageForm->load(Yii::$app->request->post()))
         {
             $model->saveArticle(); # Создаем статью и задаем ей категорию и теги
@@ -87,8 +85,6 @@ class ArticleController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'categories' => $categories,
-            'tags' => $tags,
             'imageModel' => $imageForm
         ]);
     }
@@ -106,8 +102,7 @@ class ArticleController extends Controller
         $model = $this->findModel($id);
         $imageForm = new ImageUpload;
 
-        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name');
-        $currentCategory = $model->category_id;
+        $currentCategory = $model->category->name;
 
         $names = $model->getTags()->asArray()->select('name')->all();
         $currentTags = ArrayHelper::getColumn($names, 'name');
@@ -122,10 +117,8 @@ class ArticleController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'categories' => $categories,
             'currentCategory' => $currentCategory,
 
-            'tags' => $tags,
             'currentTags' => $currentTags,
             'imageModel' => $imageForm,
         ]);
@@ -183,6 +176,37 @@ class ArticleController extends Controller
             $tags = array_unique($tags, SORT_REGULAR); # Убираем дубликаты из массива, если вдруг они возникнут.
             return $tags;
 //            return 'Все ок';
+        }
+    }
+
+    public function actionSendCategory($name)
+    {
+        $categoryName = Yii::$app->request->post('data')[0];
+        $category = Category::findOne(['name' => $categoryName]);
+        if($category)
+        {
+            return $category->id;
+        }
+        else{
+            $newCategory = new Category;
+            $newCategory->name = $categoryName;
+            $newCategory->save();
+            return $newCategory;
+        }
+
+    }
+
+    public function actionGetCategories(){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(Yii::$app->request->isAjax)
+        {
+            $query = Yii::$app->request->get('query');
+            $categoriesRaw = Category::find()->select('name')->andFilterWhere(['like', 'name', $query.'%', false])->limit(10)->all();
+            $categories = ArrayHelper::getColumn($categoriesRaw, 'name');
+            if(count($categories) > 0)
+            {
+                return $categories;
+            }
         }
     }
 

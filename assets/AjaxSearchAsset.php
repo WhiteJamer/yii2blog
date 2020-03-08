@@ -16,7 +16,7 @@ use yii\web\JqueryAsset;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class TaggingAsset extends AssetBundle
+class AjaxSearchAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
@@ -24,8 +24,7 @@ class TaggingAsset extends AssetBundle
 
     ];
     public $js = [
-        '/public/js/tagging.js',
-        '/public/js/tagging.send-to-server.js',
+        '/public/js/ajaxInput.js',
     ];
     public $depends = [
         '\app\assets\BlogAsset',

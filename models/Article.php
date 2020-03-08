@@ -125,14 +125,22 @@ class Article extends \yii\db\ActiveRecord
         $this->image = null;
     }
 
-    public function setCategory($category_id)
+    public function setCategory($name)
     {
-        $category = Category::findOne($category_id);
+        $category = Category::findOne(['name' => $name]); # Проверяем есть ли статья с данным именем в базе
 
-        if ($category != null)
+        if($category) # Если категория уже есть в базе,
         {
-            $this->category_id = $category->id;
-            return $this->save(false);
+            $this->category_id = $category->id; # то просто задаем статье ее id
+            return $this->save(); # и обновляем статью
+        }
+        else{ # Если такой категори не существует то создаем ее
+            $newCategory = new Category;
+            $newCategory->name = $name;
+            $newCategory->save(); # Сохраняем созданную статью в базе
+
+            $this->category_id = $newCategory->id; # Задаем статье id выбранной категории
+            return $this->save(); # и обновляем статью
         }
     }
 
@@ -141,7 +149,7 @@ class Article extends \yii\db\ActiveRecord
         $this->clearCurrentTags(); # Удаляем старые связи из промежуточной таблицы ArticleTag
         if($tags) # возможность оставить поле тегов пустым
         {
-            foreach ($tags as $tag_id)
+            foreach ($tags as $tag_id) # Перебираем массив тегов и связываем каждый тег с указанной статьей.
             {
 
                 $tag = Tag::findOne(['id' => $tag_id]);

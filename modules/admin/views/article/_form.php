@@ -1,5 +1,6 @@
 <?php
 
+use app\assets\AjaxSearchAsset;
 use app\assets\TaggingAsset;
 use yii\helpers\Html;
 use yii\helpers\Json;
@@ -7,6 +8,7 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 
 TaggingAsset::register($this);
+AjaxSearchAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Article */
@@ -24,11 +26,30 @@ TaggingAsset::register($this);
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
     <?= Html::activeLabel($model, 'Категория'); ?>
-    <?= Html::dropDownList('category', $currentCategory, $categories,
-    [
-            'class' => 'form-control',
-            'prompt' => (!$currentCategory) ? 'Не указано...' : null,
-    ]); ?>
+    <div class="category-input">
+        <?= Html::textInput('category', $currentCategory, ['id' => 'categoryAjaxInput', 'class' => 'form-control', 'autocomplete' => 'off']); ?>
+        <div class="myDropDown" id="categoryAjaxResults" style="display:none">
+        <?= $this->registerCss('
+        .myDropDown{
+        min-height: 0;
+        z-index: 2;
+        position: absolute;
+        background: #fff;
+        border: 0.1rem solid #000;
+        width: 100%;
+        padding: 0.5rem;
+        color: green;
+        list-style: none;
+        }
+        li.selected{
+        background: #eee;
+        }
+        .category-input{
+        position: relative;
+        }
+        ')?>
+    </div>
+    </div>
     <?= Html::activeLabel($model, 'Теги'); ?>
 
     <div data-tags-input-name="tag" id="tagBox"></div> <!-- Рендерит JS-поле для тегов -->
