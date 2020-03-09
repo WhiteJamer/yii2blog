@@ -16,7 +16,6 @@ class ImageUpload extends Model
     public function rules()
     {
         return [
-            [['imageFile'], 'required'],
             [['imageFile'], 'file', 'extensions' => 'png, jpg'],
         ];
 

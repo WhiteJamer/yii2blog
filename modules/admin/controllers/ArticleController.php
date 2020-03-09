@@ -2,13 +2,16 @@
 
 namespace app\modules\admin\controllers;
 
+use app\models\ArticleTag;
 use app\models\Category;
 use app\models\ImageUpload;
 use app\models\Tag;
 use Yii;
 use app\models\Article;
 use app\models\ArticleSearch;
+use yii\db\Exception;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -70,13 +73,19 @@ class ArticleController extends Controller
     public function actionCreate()
     {
         $model = new Article();
+        $imageForm = new ImageUpload;
 
-        if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
+        if ($model->load(Yii::$app->request->post()) && $imageForm->load(Yii::$app->request->post()))
+        {
+            $model->saveArticle(); # Создаем статью и задаем ей категорию и теги
+            $this->setImage($model);  # Затем устанавливаем для нее картинку
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'imageModel' => $imageForm
         ]);
     }
 
@@ -89,14 +98,29 @@ class ArticleController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->saveArticle()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $model = $this->findModel($id);
+        $imageForm = new ImageUpload;
+
+        $currentCategory = $model->category->name;
+
+        $names = $model->getTags()->asArray()->select('name')->all();
+        $currentTags = ArrayHelper::getColumn($names, 'name');
+
+        if ($model->load(Yii::$app->request->post()) && $imageForm->load(Yii::$app->request->post()))
+        {
+            $model->saveArticle(); # Обновляем данные о статье + категорию и теги
+            $this->setImage($model); # Обновляем картинку
+
+            $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
             'model' => $model,
+            'currentCategory' => $currentCategory,
+
+            'currentTags' => $currentTags,
+            'imageModel' => $imageForm,
         ]);
     }
 
@@ -114,77 +138,76 @@ class ArticleController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionSetImage($id)
+    public function setImage(Article $articleForm)
     {
         $imageForm = new ImageUpload;
-        $article = $this->findModel($id);
+        $article = $this->findModel($articleForm->id);
 
-        if(Yii::$app->request->isPost)
+        $file = UploadedFile::getInstance($imageForm, 'imageFile');
+
+        if($file) # Загрузка картинки будет только если поле imageFile не пустое.
         {
-            $file = UploadedFile::getInstance($imageForm, 'imageFile');
-
-            if($article->saveImage($imageForm->uploadImage($file, $article->image)))
-            {
-
-                return $this->redirect(['view', 'id' => $article->id]);
-
-            }
-
-
+            $article->saveImage($imageForm->uploadImage($file, $article->image));
         }
-        return $this->render('image',
-            ['model' => $imageForm]
-        );
+        return true;
+    }
+
+    public function actionSendTags()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(Yii::$app->request->isAjax)
+        {
+            $tags = array(); # В этот массив нужно поместить ключи тегов для передачи их в поле 'tags' в ArticleForm.
+            $tagNames = Yii::$app->request->post('data'); # Массив имен из JS-виджета для удобного задания тегов.
+            foreach ($tagNames as $name)
+            {
+                $tag = Tag::findOne(['name' => $name]);
+                if($tag) # Если тег существует то выбираем из него ID
+                {
+                    array_push($tags, $tag->id); # Добавляем ID тега в массив.
+                }
+                else{ # Если такого тега не существует, то создаем его
+                    $new_tag = new Tag;
+                    $new_tag->name = $name;
+                    $new_tag->save();
+                    array_push($tags, $new_tag->id);
+                }
+            }
+            $tags = array_unique($tags, SORT_REGULAR); # Убираем дубликаты из массива, если вдруг они возникнут.
+            return $tags;
+//            return 'Все ок';
+        }
+    }
+
+    public function actionSendCategory($name)
+    {
+        $categoryName = Yii::$app->request->post('data')[0];
+        $category = Category::findOne(['name' => $categoryName]);
+        if($category)
+        {
+            return $category->id;
+        }
+        else{
+            $newCategory = new Category;
+            $newCategory->name = $categoryName;
+            $newCategory->save();
+            return $newCategory;
+        }
 
     }
 
-    public function actionSetCategory($id)
-    {
-        $article = $this->findModel($id);
-        $categories = ArrayHelper::map(Category::find()->all(), 'id', 'name'); # нужен array hel[per
-        $currentCategory = ($article->category) ? $article->category->id : 0;
-        if(Yii::$app->request->isPost)
+    public function actionGetCategories(){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(Yii::$app->request->isAjax)
         {
-
-            $category_id = Yii::$app->request->post('category');
-
-            if($article->saveCategory($category_id))
+            $query = Yii::$app->request->get('query');
+            $categoriesRaw = Category::find()->select('name')->andFilterWhere(['like', 'name', $query.'%', false])->limit(10)->all();
+            $categories = ArrayHelper::getColumn($categoriesRaw, 'name');
+            if(count($categories) > 0)
             {
-                return $this->redirect(['view', 'id' => $article->id]);
+                return $categories;
             }
         }
-        return $this->render('category',
-            [
-                'model' => $article,
-                'categories' => $categories,
-                'currentCategory' => $currentCategory
-            ]);
-
-    }
-
-    public function actionSetTags($id)
-    {
-        $article = $this->findModel($id);
-        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'name');
-
-        $ids = $article->getTags()->select('id')->asArray()->all();
-        $selectedTags = ArrayHelper::getColumn($ids, 'id');
-
-        if(Yii::$app->request->isPost)
-        {
-            $selectedTags = Yii::$app->request->post('tags');
-
-            if ($article->saveTags($selectedTags))
-            {
-                return $this->redirect(['view', 'id' => $article->id]);
-            }
-        }
-        return $this->render('tags',
-            [
-                'model' => $article,
-                'selectedTags' => $selectedTags,
-                'tags' => $tags
-            ]);
     }
 
     /**

@@ -19,8 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Set-image', ['set-image', 'id' => $model->id], ['class' => 'btn btn-secondary']) ?>
-        <?= Html::a('Set-category', ['set-category', 'id' => $model->id], ['class' => 'btn btn-secondary']) ?>
-        <?= Html::a('Set-tags', ['set-tags', 'id' => $model->id], ['class' => 'btn btn-secondary']) ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -60,6 +58,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'html',
                 'value' => function($data){
                     return Html::a($data->category->name, ['/site/category', 'id' => $data->category->id]);
+                }
+            ],
+            [
+                'label' => 'Теги',
+                'format' => 'html',
+                'value' => function($data){
+                    $html = '';
+                    foreach($data->tags as $tag){
+                        $html = $html . Html::a($tag->name, ['/site/tag', 'name' => $tag->name]) . ", ";
+                    }
+                    return $html;
                 }
             ],
             [
