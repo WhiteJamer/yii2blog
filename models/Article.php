@@ -40,6 +40,7 @@ class Article extends \yii\db\ActiveRecord
         return [
             [['title'], 'string', 'max' => 255],
             [['content', 'image'], 'string'],
+            [['title', 'content'], 'required'],
             [['author_id', 'category_id', 'views'], 'integer'],
             [['pub_date'], 'default', 'value' => date('Y-m-d H:i:s')],
         ];
