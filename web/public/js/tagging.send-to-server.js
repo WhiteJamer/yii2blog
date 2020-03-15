@@ -1,5 +1,5 @@
 var tags;
-var data = ['fdsdf', 'dffsdfsd'];
+var data = [];
 var form = $('form');
 var tagBox = $('#tagBox'); 
 var sended = true; 
@@ -45,7 +45,7 @@ tagBox.tagging('add', currentTags); // Добавляем в поле теги �
 				 tagsSelect.find('option').remove(); 
 				 /*
 				 	Заполняем скрытое поле 'select'
-				 	полученными ID категорий.
+				 	полученными ID тегов.
 				 */
 				 for(var key in response){
 				 	tagsSelect.append(`<option value=${response[key]} selected>${response[key]}</option>`);
@@ -59,14 +59,16 @@ tagBox.tagging('add', currentTags); // Добавляем в поле теги �
 				 	Если все прошло успешно отправляем форму
 				 	с заполненными данными
 				 */
-				 form.off('submit').submit();
+			   	 form.off('submit').submit();
 
 
 			   },
 			   error: function(msg){
-			   	console.log( "Данные не отправлены: " + msg );
+			   	console.log( "Данные не отправлены, сохраняем без тегов: " + msg );
+			    form.off('submit').submit();
 			   },
 			});
+
 		}
 
 	});

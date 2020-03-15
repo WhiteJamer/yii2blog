@@ -184,7 +184,7 @@
             $( document.createElement( "input" ) )
                 .attr( "type", "hidden" )
                 // custom input name
-                .attr( "name", self.config[ "tags-input-name" ] + "[]" )
+                .attr( "name", self.config[ "tags-input-name" ] + "Item" )
                 .val( text )
                 .appendTo( $tag );
 
